@@ -1,6 +1,6 @@
 {
   "experiment_name": "ablation_gat_off",
   "group": "ablation",
-  "variant": "get_off",
+  "variant": "gat_off",
   "seed": 42
 }

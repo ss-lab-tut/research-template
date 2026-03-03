@@ -6,11 +6,11 @@ This template is designed for:
 
 - B4 students starting research
 - M1 students writing papers
-- Experiments with ablation studies
+- Ablation studies
 - SOTA comparisons
 - Multi-seed statistical evaluation
 
-The philosophy:
+Philosophy:
 
 Simple > Smart  
 Reproducible > Fast  
@@ -29,6 +29,10 @@ research-template/
 - src/                    reusable functions
 - experiments/            runnable scripts
 - results/                auto-created (NOT committed)
+
+Note:
+If you download the repository as ZIP from GitHub,
+the folder name may include "-main". This is normal.
 
 ------------------------------------------------------------
 
@@ -49,7 +53,7 @@ No direct execution here.
 experiments/
 - run.py              run one config
 - sweep.py            run all configs
-- summarize.py        collect all runs
+- summarize.py        collect per-run results
 - sweep_seeds.py      run multiple seeds
 - summarize_seeds.py  compute mean/std
 
@@ -78,15 +82,19 @@ pip install -r requirements.txt
 If installation fails:
 python -m pip install --upgrade pip
 
-3) Run a single experiment
+3) Run one experiment
 
 python experiments/run.py configs/demo.json
 
-4) Run all configs
+------------------------------------------------------------
+
+RUNNING MULTIPLE EXPERIMENTS
+
+Run all configs once:
 
 python experiments/sweep.py
 
-5) Summarize results
+Summarize per-run results:
 
 python experiments/summarize.py
 
@@ -97,7 +105,7 @@ results/summary.csv
 
 MULTI-SEED STATISTICS (FOR PAPERS)
 
-Run multiple seeds:
+Run all configs with multiple seeds:
 
 python experiments/sweep_seeds.py
 
@@ -261,6 +269,7 @@ COMMON MISTAKES
 - Forgetting to fix seed
 - Mixing execution logic inside src/
 - Saving outputs outside results/
+- Running from wrong directory without activating environment
 
 ------------------------------------------------------------
 
@@ -284,7 +293,7 @@ Examples:
 - fix/readme-typo
 
 Before PR:
-At least confirm demo runs.
+Confirm that at least demo config runs successfully.
 
 ------------------------------------------------------------
 
@@ -307,7 +316,7 @@ It is built for:
 
 FINAL ADVICE
 
-If your experiments become messy,
+If experiments become messy,
 the problem is usually:
 
 - Missing config separation

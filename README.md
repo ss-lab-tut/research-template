@@ -1,9 +1,15 @@
 # research-template
 
-SS-Lab Research Project Template (Beginner Friendly)
+SS-Lab Research Project Template  
+Beginner-Friendly / Safe / Minimal
 
 This template is intentionally simple.
-Students should be able to run it immediately.
+
+Goals:
+- Students can run it immediately.
+- Every experiment automatically saves outputs.
+- The structure is hard to break.
+- GitHub usage remains safe.
 
 ------------------------------------------------------------
 
@@ -14,15 +20,36 @@ research-template/
 - requirements.txt
 - .gitignore
 - LICENSE
-- src/
-- experiments/
-- results/  (auto-created, NOT committed)
+- src/                  reusable functions
+- experiments/          runnable entry scripts
+- results/              auto-created (NOT committed)
+
+------------------------------------------------------------
+
+WHAT GOES WHERE?
+
+experiments/
+- Entry scripts (things you run)
+- Example: run_demo.py
+- Example: run_train.py
+- Example: run_ablation1.py
+
+src/
+- Reusable code
+- Shared utilities
+- Models
+- Functions used by multiple experiments
+
+results/
+- All experiment outputs
+- Automatically created
+- Never committed to GitHub
 
 ------------------------------------------------------------
 
 QUICK START (FOR STUDENTS)
 
-1) Create virtual environment
+Step 1: Create virtual environment
 
 macOS / Linux:
 python -m venv .venv
@@ -32,11 +59,11 @@ Windows (PowerShell):
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 
-2) Install dependencies
+Step 2: Install dependencies
 
 pip install -r requirements.txt
 
-3) Run demo
+Step 3: Run demo
 
 python experiments/run_demo.py
 
@@ -53,13 +80,44 @@ log.json
 
 ------------------------------------------------------------
 
-HOW TO START A NEW EXPERIMENT
+HOW TO CREATE A NEW EXPERIMENT
 
-1) Copy experiments/run_demo.py
-2) Rename it (example: run_ablation1.py)
-3) Modify it
-4) Run it
+1) Copy:
+   experiments/run_demo.py
+
+2) Rename:
+   experiments/run_your_experiment.py
+
+Examples:
+- run_ablation1.py
+- run_train.py
+- run_eval.py
+
+3) Modify main()
+
+4) Run it:
+   python experiments/run_your_experiment.py
+
 5) Outputs automatically go to results/
+
+------------------------------------------------------------
+
+EXPERIMENT TEMPLATE (COPY THIS)
+
+from src.main import make_run_dir, save_json
+
+def main():
+    run_dir = make_run_dir("my_experiment")
+
+    # Your experiment code here
+    x = 1 + 1
+
+    save_json(run_dir / "result.json", {"x": x})
+
+    print("[OK] saved to", run_dir)
+
+if __name__ == "__main__":
+    main()
 
 ------------------------------------------------------------
 
@@ -72,6 +130,7 @@ DO NOT COMMIT:
 ALWAYS:
 - Put runnable scripts inside experiments/
 - Put reusable code inside src/
+- Save outputs inside results/
 
 ------------------------------------------------------------
 
@@ -86,8 +145,25 @@ Direct commits to main are disabled for safety.
 
 ------------------------------------------------------------
 
-Design Philosophy:
+COMMON MISTAKES
 
-Simple > Smart
-Clear > Clever
-Safe > Fancy
+- Writing experiment code inside src/ and trying to run it directly
+- Saving files outside results/
+- Committing results/
+- Forgetting to activate virtual environment
+
+If something fails:
+1) Activate .venv
+2) Reinstall requirements
+3) Run run_demo.py first
+
+------------------------------------------------------------
+
+DESIGN PHILOSOPHY
+
+Simple > Smart  
+Clear > Clever  
+Safe > Fancy  
+
+If students can run it without asking questions,
+the template is successful.

@@ -2,12 +2,17 @@ from pathlib import Path
 from datetime import datetime
 import json
 import random
+
 import numpy as np
 
 
-def set_seed(seed: int):
+def set_seed(seed: int) -> None:
     random.seed(seed)
     np.random.seed(seed)
+
+
+def load_config(path: str) -> dict:
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def make_run_dir(tag: str) -> Path:
@@ -20,10 +25,5 @@ def make_run_dir(tag: str) -> Path:
     return run_dir
 
 
-def save_json(path: Path, data: dict):
-    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
-
-
-def load_config(path: str):
-    with open(path, "r") as f:
-        return json.load(f)
+def save_json(path: Path, data: dict) -> None:
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")

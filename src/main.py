@@ -1,36 +1,16 @@
-"""
-src/main.py
-
-This file provides small reusable utilities for experiments.
-
-Rule:
-- Put "reusable code" here (functions used by many experiments).
-- Put "runnable scripts" under experiments/ (entry points).
-
-We keep it simple for beginners:
-- create a results run folder
-- save json logs
-"""
-
 from pathlib import Path
 from datetime import datetime
 import json
+import random
+import numpy as np
+
+
+def set_seed(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
 
 
 def make_run_dir(tag: str) -> Path:
-    """
-    Create a timestamped run directory under results/.
-
-    Example:
-        run_dir = make_run_dir("demo")
-        -> results/20260303_123456_demo/
-
-    Args:
-        tag (str): short name for the run (e.g., "demo", "train", "ablation1")
-
-    Returns:
-        Path: created run directory
-    """
     base = Path("results")
     base.mkdir(exist_ok=True)
 
@@ -40,12 +20,10 @@ def make_run_dir(tag: str) -> Path:
     return run_dir
 
 
-def save_json(path: Path, data: dict) -> None:
-    """
-    Save dict to JSON file (UTF-8).
+def save_json(path: Path, data: dict):
+    path.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
-    Args:
-        path (Path): output file path
-        data (dict): JSON-serializable dict
-    """
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+def load_config(path: str):
+    with open(path, "r") as f:
+        return json.load(f)

@@ -1,25 +1,93 @@
 # research-template
 
-SS-Lab research project template (beginner-friendly).
+SS-Lab Research Project Template (Beginner Friendly)
 
-This template is designed so that:
-- students can run a demo with ONE command
-- outputs are saved under `results/`
-- `results/` is NOT committed to GitHub
+This template is intentionally simple.
+Students should be able to run it immediately.
 
-## Folder structure
+------------------------------------------------------------
 
-- `src/` : reusable source code (functions, models, utilities)
-- `experiments/` : runnable scripts (entry points)
-- `results/` : outputs (ignored by git)
+PROJECT STRUCTURE
 
-## Quick start (students)
+research-template/
+- README.md
+- requirements.txt
+- .gitignore
+- LICENSE
+- src/
+- experiments/
+- results/  (auto-created, NOT committed)
 
-### 1) Create virtual environment (recommended)
+------------------------------------------------------------
 
-```bash
+QUICK START (FOR STUDENTS)
+
+1) Create virtual environment
+
+macOS / Linux:
 python -m venv .venv
-# mac / linux
 source .venv/bin/activate
-# windows (PowerShell)
-# .venv\Scripts\Activate.ps1
+
+Windows (PowerShell):
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+2) Install dependencies
+
+pip install -r requirements.txt
+
+3) Run demo
+
+python experiments/run_demo.py
+
+If successful, you will see:
+
+[OK] Template works
+
+A folder will be created automatically:
+
+results/YYYYMMDD_HHMMSS_demo/
+
+Inside it:
+log.json
+
+------------------------------------------------------------
+
+HOW TO START A NEW EXPERIMENT
+
+1) Copy experiments/run_demo.py
+2) Rename it (example: run_ablation1.py)
+3) Modify it
+4) Run it
+5) Outputs automatically go to results/
+
+------------------------------------------------------------
+
+IMPORTANT RULES
+
+DO NOT COMMIT:
+- results/
+- .venv/
+
+ALWAYS:
+- Put runnable scripts inside experiments/
+- Put reusable code inside src/
+
+------------------------------------------------------------
+
+DEVELOPMENT FLOW
+
+1) Create a new branch
+2) Make changes
+3) Open a Pull Request
+4) Merge into main
+
+Direct commits to main are disabled for safety.
+
+------------------------------------------------------------
+
+Design Philosophy:
+
+Simple > Smart
+Clear > Clever
+Safe > Fancy

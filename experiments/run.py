@@ -1,63 +1,103 @@
+"""
+experiments/run.py
+
+Run a single experiment using one config file.
+
+Usage:
+    python experiments/run.py configs/demo.json
+"""
+
+# --- Import safety block (prevents import error if executed from subdirectory) ---
 import sys
 from pathlib import Path
+
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
+# --- Standard imports ---
+import sys
 from src.main import load_config, make_run_dir, save_json, set_seed
 
 
 def run_experiment(config: dict) -> dict:
     """
-    Replace this body with your real experiment.
+    Replace this function body with your real experiment.
 
-    Must return a dict of metrics that summarize the run.
+    It must return a dictionary of metrics.
+
     Example metrics:
-    - accuracy
-    - loss
-    - reward
-    - sla_violation
-    - latency
+        - accuracy
+        - loss
+        - reward
+        - sla_violation
+        - latency
     """
-    # demo metrics (placeholder)
+
+    # ----------------------------
+    # Example placeholder experiment
+    # ----------------------------
+
+    x = 1 + 1  # Replace with real experiment logic
+
     metrics = {
-        "metric_x": 1.0,
-        "metric_y": 2.0,
+        "metric_x": x,
+        "metric_y": x * 2,
     }
+
     return metrics
 
 
 def main():
+    # ------------------------------------------------------------
+    # Check arguments
+    # ------------------------------------------------------------
     if len(sys.argv) != 2:
         print("Usage: python experiments/run.py configs/<config>.json")
         sys.exit(1)
 
     config_path = sys.argv[1]
+
+    # ------------------------------------------------------------
+    # Load configuration
+    # ------------------------------------------------------------
     config = load_config(config_path)
 
-    set_seed(int(config.get("seed", 0)))
+    seed = int(config.get("seed", 0))
+    set_seed(seed)
 
-    tag = config.get("experiment_name", "run")
-    run_dir = make_run_dir(tag)
+    experiment_name = config.get("experiment_name", "experiment")
 
-    # save config copy for reproducibility
+    # ------------------------------------------------------------
+    # Create run directory
+    # ------------------------------------------------------------
+    run_dir = make_run_dir(experiment_name)
+
+    # Save config for reproducibility
     save_json(run_dir / "config_used.json", config)
 
-    # run
+    # ------------------------------------------------------------
+    # Run experiment
+    # ------------------------------------------------------------
     metrics = run_experiment(config)
 
-    # save metrics (standardized)
+    # ------------------------------------------------------------
+    # Standardized result structure
+    # ------------------------------------------------------------
     result = {
-        "experiment_name": config.get("experiment_name"),
+        "experiment_name": experiment_name,
         "group": config.get("group"),
         "variant": config.get("variant"),
-        "seed": config.get("seed"),
+        "seed": seed,
         "metrics": metrics,
         "config_path": config_path,
         "run_dir": str(run_dir),
     }
+
     save_json(run_dir / "metrics.json", result)
 
-    print("[OK] finished:", tag)
-    print("[OK] saved to:", run_dir)
+    print("--------------------------------------------------")
+    print("[OK] Experiment finished:", experiment_name)
+    print("[OK] Output saved to:", run_dir)
+    print("--------------------------------------------------")
 
 
 if __name__ == "__main__":

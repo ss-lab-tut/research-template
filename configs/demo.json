@@ -1,5 +1,6 @@
 {
   "experiment_name": "demo",
-  "seed": 42,
-  "description": "Demo experiment configuration"
+  "group": "proposed",
+  "variant": "default",
+  "seed": 42
 }

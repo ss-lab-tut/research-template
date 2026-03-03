@@ -159,11 +159,35 @@ If something fails:
 
 ------------------------------------------------------------
 
-DESIGN PHILOSOPHY
+GITHUB RULES (FOR STUDENTS)
 
-Simple > Smart  
-Clear > Clever  
-Safe > Fancy  
+Main rule:
+- NEVER commit directly to main.
+- Always use: branch -> pull request -> merge.
 
-If students can run it without asking questions,
-the template is successful.
+Branch naming:
+- feature/<short-topic>
+- fix/<short-topic>
+Examples:
+- feature/add-train-script
+- fix/readme-typo
+
+Pull Request (PR) title examples:
+- Add training script
+- Fix README typo
+- Update requirements
+
+PR description (1 line is enough):
+- What you changed and why.
+
+Before opening PR:
+- Run the demo (at least):
+  python experiments/run_demo.py
+
+If you made a mistake:
+- Do NOT panic.
+- Ask supervisor / TA.
+- Worst case: close the PR and create a new one.
+
+Golden rule:
+- If main stays runnable, everything is fine.

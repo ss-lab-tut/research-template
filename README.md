@@ -1,15 +1,21 @@
 # research-template
 
 SS-Lab Research Project Template  
-Beginner-Friendly / Safe / Minimal
+Minimal / Reproducible / Paper-Ready
 
-This template is intentionally simple.
+This template is designed for:
 
-Goals:
-- Students can run it immediately.
-- Every experiment automatically saves outputs.
-- The structure is hard to break.
-- GitHub usage remains safe.
+- Graduate students
+- Research experiments
+- Ablation studies
+- SOTA comparisons
+- Reproducible research
+
+The philosophy is:
+
+Simple > Smart  
+Clear > Clever  
+Reproducible > Fast  
 
 ------------------------------------------------------------
 
@@ -20,36 +26,45 @@ research-template/
 - requirements.txt
 - .gitignore
 - LICENSE
-- src/                  reusable functions
-- experiments/          runnable entry scripts
-- results/              auto-created (NOT committed)
+- configs/               experiment configurations
+- src/                   reusable code
+- experiments/           runnable scripts
+- results/               auto-created (NOT committed)
 
 ------------------------------------------------------------
 
 WHAT GOES WHERE?
 
-experiments/
-- Entry scripts (things you run)
-- Example: run_demo.py
-- Example: run_train.py
-- Example: run_ablation1.py
+configs/
+- JSON files defining experiment settings
+- Each config = one experiment condition
+- Example:
+  - demo.json
+  - ablation_gat_off.json
+  - sota_baselineA.json
 
 src/
-- Reusable code
-- Shared utilities
-- Models
-- Functions used by multiple experiments
+- Reusable functions
+- Utilities
+- Shared logic
+- No direct execution
+
+experiments/
+- Entry scripts (runnable)
+- run.py        → run one config
+- sweep.py      → run all configs
+- summarize.py  → collect results
 
 results/
-- All experiment outputs
 - Automatically created
-- Never committed to GitHub
+- Each run gets its own folder
+- NEVER commit this folder
 
 ------------------------------------------------------------
 
-QUICK START (FOR STUDENTS)
+QUICK START
 
-Step 1: Create virtual environment
+1) Create virtual environment
 
 macOS / Linux:
 python -m venv .venv
@@ -59,135 +74,234 @@ Windows (PowerShell):
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 
-Step 2: Install dependencies
+2) Install dependencies
 
 pip install -r requirements.txt
 
-Step 3: Run demo
+If installation fails:
+python -m pip install --upgrade pip
 
-python experiments/run_demo.py
+3) Run a single experiment
 
-If successful, you will see:
+python experiments/run.py configs/demo.json
 
-[OK] Template works
+4) Run all experiments (sweep)
 
-A folder will be created automatically:
+python experiments/sweep.py
 
-results/YYYYMMDD_HHMMSS_demo/
+5) Summarize results
 
-Inside it:
-log.json
+python experiments/summarize.py
+
+Output:
+results/summary.csv
 
 ------------------------------------------------------------
 
-HOW TO CREATE A NEW EXPERIMENT
+EXPERIMENT DESIGN (VERY IMPORTANT)
 
-1) Copy:
-   experiments/run_demo.py
+Each experiment is defined by:
 
-2) Rename:
-   experiments/run_your_experiment.py
+- group
+- variant
+- seed
+
+Example config:
+
+{
+  "experiment_name": "ablation_gat_off",
+  "group": "ablation",
+  "variant": "gat_off",
+  "seed": 42
+}
+
+------------------------------------------------------------
+
+GROUP MEANINGS
+
+group = proposed
+    Your main method
+
+group = ablation
+    Modified version of proposed
+    (remove component / change parameter)
+
+group = sota
+    State-of-the-art comparison
+
+group = baseline
+    Simple or classical method
+
+------------------------------------------------------------
+
+WHAT IS ABLATION?
+
+Ablation isolates components.
 
 Examples:
-- run_ablation1.py
-- run_train.py
-- run_eval.py
+- Remove attention
+- Replace GAT with MLP
+- Change penalty weight
+- Remove constraint term
 
-3) Modify main()
-
-4) Run it:
-   python experiments/run_your_experiment.py
-
-5) Outputs automatically go to results/
+Goal:
+Explain why your method works.
 
 ------------------------------------------------------------
 
-EXPERIMENT TEMPLATE (COPY THIS)
+WHAT IS SOTA COMPARISON?
 
-from src.main import make_run_dir, save_json
+SOTA comparison evaluates:
 
-def main():
-    run_dir = make_run_dir("my_experiment")
+Your method vs existing methods.
 
-    # Your experiment code here
-    x = 1 + 1
+Examples:
+- Heuristic baseline
+- Classical optimization
+- Published RL method
+- Public implementation
 
-    save_json(run_dir / "result.json", {"x": x})
-
-    print("[OK] saved to", run_dir)
-
-if __name__ == "__main__":
-    main()
+Goal:
+Show performance advantage.
 
 ------------------------------------------------------------
 
-IMPORTANT RULES
+REPRODUCIBILITY RULES
 
-DO NOT COMMIT:
-- results/
-- .venv/
+Every experiment must:
 
-ALWAYS:
-- Put runnable scripts inside experiments/
-- Put reusable code inside src/
-- Save outputs inside results/
+1) Use a config file
+2) Fix random seed
+3) Save config_used.json
+4) Save metrics.json
+5) Never modify results manually
+
+If someone cannot reproduce your experiment,
+it is considered incomplete.
 
 ------------------------------------------------------------
 
-DEVELOPMENT FLOW
+RESULT STRUCTURE
 
-1) Create a new branch
-2) Make changes
-3) Open a Pull Request
-4) Merge into main
+Each run creates:
 
-Direct commits to main are disabled for safety.
+results/YYYYMMDD_HHMMSS_<experiment_name>/
+
+Inside:
+- config_used.json
+- metrics.json
+
+Example metrics.json:
+
+{
+  "experiment_name": "demo",
+  "group": "proposed",
+  "variant": "default",
+  "seed": 42,
+  "metrics": {
+    "accuracy": 0.95,
+    "reward": 123.4
+  }
+}
+
+------------------------------------------------------------
+
+HOW TO ADD A NEW EXPERIMENT
+
+1) Create a new config in configs/
+
+Example:
+configs/ablation_penalty_low.json
+
+2) Run:
+
+python experiments/run.py configs/ablation_penalty_low.json
+
+3) Or run all:
+
+python experiments/sweep.py
+
+------------------------------------------------------------
+
+HOW TO ADD A NEW METRIC
+
+In experiments/run.py:
+
+Modify run_experiment()
+
+Return metrics as dict:
+
+metrics = {
+    "accuracy": value,
+    "loss": value,
+    "reward": value
+}
+
+summarize.py will automatically collect all metrics.
 
 ------------------------------------------------------------
 
 COMMON MISTAKES
 
-- Writing experiment code inside src/ and trying to run it directly
-- Saving files outside results/
-- Committing results/
-- Forgetting to activate virtual environment
-
-If something fails:
-1) Activate .venv
-2) Reinstall requirements
-3) Run run_demo.py first
+- Running code without activating .venv
+- Editing results manually
+- Forgetting to fix seed
+- Mixing experiment logic inside src and experiments
 
 ------------------------------------------------------------
 
 GITHUB RULES (FOR STUDENTS)
 
-Main rule:
-- NEVER commit directly to main.
-- Always use: branch -> pull request -> merge.
+Never commit directly to main.
 
-Branch naming:
-- feature/<short-topic>
-- fix/<short-topic>
-Examples:
-- feature/add-train-script
+Workflow:
+
+1) Create branch:
+   feature/<short-name>
+
+2) Make changes
+
+3) Open Pull Request
+
+4) Merge
+
+Branch examples:
+- feature/add-train
 - fix/readme-typo
 
-Pull Request (PR) title examples:
-- Add training script
-- Fix README typo
-- Update requirements
+Before PR:
+At least confirm demo runs.
 
-PR description (1 line is enough):
-- What you changed and why.
+------------------------------------------------------------
 
-Before opening PR:
-- Run the demo (at least):
-  python experiments/run_demo.py
+DESIGN PRINCIPLES
 
-If you made a mistake:
-- Do NOT panic.
-- Ask supervisor / TA.
-- Worst case: close the PR and create a new one.
+This template is intentionally:
 
-Golden rule:
-- If main stays runnable, everything is fine.
+- Not over-engineered
+- Not production-oriented
+- Not CI-heavy
+
+It is built for:
+
+- Academic reproducibility
+- Clean experiment comparison
+- Student safety
+- Long-term maintainability
+
+------------------------------------------------------------
+
+FINAL NOTE
+
+If experiments become messy,
+the problem is usually:
+
+- Missing config separation
+- Inconsistent metric naming
+- No seed control
+
+Keep experiments simple.
+Keep metrics consistent.
+Keep structure stable.
+
+That is how research scales.

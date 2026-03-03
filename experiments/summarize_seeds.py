@@ -1,9 +1,33 @@
+"""
+experiments/summarize_seeds.py
+
+Aggregate results across seeds using results/summary.csv.
+
+Input:
+    results/summary.csv   (created by experiments/summarize.py)
+
+Output:
+    results/summary_mean_std.csv
+
+Aggregation key:
+    (experiment_name, group, variant)
+
+Usage:
+    python experiments/summarize_seeds.py
+"""
+
+# --- Import safety block ---
+import sys
 from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+# --- Standard imports ---
 import csv
 import math
 
 
-def is_number(x):
+def is_number(x) -> bool:
     try:
         float(x)
         return True
@@ -29,8 +53,8 @@ def main():
     results_dir = Path("results")
     in_path = results_dir / "summary.csv"
     if not in_path.exists():
-        print("[ERR] results/summary.csv not found. Run summarize.py first.")
-        return
+        print("[ERR] results/summary.csv not found. Run experiments/summarize.py first.")
+        sys.exit(1)
 
     # Read summary.csv
     with in_path.open("r", encoding="utf-8") as f:
@@ -39,7 +63,7 @@ def main():
 
     if not rows:
         print("[ERR] summary.csv is empty.")
-        return
+        sys.exit(1)
 
     # Determine metric columns (everything except these)
     base_cols = {"experiment_name", "group", "variant", "seed", "run_dir"}
@@ -70,6 +94,7 @@ def main():
                     continue
                 if is_number(v):
                     vals.append(float(v))
+
             if vals:
                 out[f"{mc}_mean"] = f"{mean(vals):.6g}"
                 out[f"{mc}_std"] = f"{std(vals):.6g}"
@@ -81,6 +106,7 @@ def main():
 
     # Write aggregated CSV
     out_path = results_dir / "summary_mean_std.csv"
+
     fieldnames = ["experiment_name", "group", "variant", "n_runs"]
     for mc in metric_cols:
         fieldnames += [f"{mc}_mean", f"{mc}_std"]

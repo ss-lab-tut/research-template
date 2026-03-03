@@ -1,21 +1,20 @@
-# research-template
+# SS-Lab Research Template
 
-SS-Lab Research Project Template  
-Minimal / Reproducible / Paper-Ready
+Minimal. Reproducible. Paper-Ready.
 
 This template is designed for:
 
-- Graduate students
-- Research experiments
-- Ablation studies
+- B4 students starting research
+- M1 students writing papers
+- Experiments with ablation studies
 - SOTA comparisons
-- Reproducible research
+- Multi-seed statistical evaluation
 
-The philosophy is:
+The philosophy:
 
 Simple > Smart  
-Clear > Clever  
 Reproducible > Fast  
+Clear structure > Clever tricks  
 
 ------------------------------------------------------------
 
@@ -26,39 +25,37 @@ research-template/
 - requirements.txt
 - .gitignore
 - LICENSE
-- configs/               experiment configurations
-- src/                   reusable code
-- experiments/           runnable scripts
-- results/               auto-created (NOT committed)
+- configs/                experiment configurations (JSON)
+- src/                    reusable functions
+- experiments/            runnable scripts
+- results/                auto-created (NOT committed)
 
 ------------------------------------------------------------
 
 WHAT GOES WHERE?
 
 configs/
-- JSON files defining experiment settings
-- Each config = one experiment condition
-- Example:
-  - demo.json
-  - ablation_gat_off.json
-  - sota_baselineA.json
+Each JSON file defines ONE experiment condition.
+
+Examples:
+- demo.json
+- ablation_gat_off.json
+- sota_baselineA.json
 
 src/
-- Reusable functions
-- Utilities
-- Shared logic
-- No direct execution
+Reusable code only.
+No direct execution here.
 
 experiments/
-- Entry scripts (runnable)
-- run.py        → run one config
-- sweep.py      → run all configs
-- summarize.py  → collect results
+- run.py              run one config
+- sweep.py            run all configs
+- summarize.py        collect all runs
+- sweep_seeds.py      run multiple seeds
+- summarize_seeds.py  compute mean/std
 
 results/
-- Automatically created
-- Each run gets its own folder
-- NEVER commit this folder
+Automatically created.
+Never commit this folder.
 
 ------------------------------------------------------------
 
@@ -85,7 +82,7 @@ python -m pip install --upgrade pip
 
 python experiments/run.py configs/demo.json
 
-4) Run all experiments (sweep)
+4) Run all configs
 
 python experiments/sweep.py
 
@@ -98,13 +95,33 @@ results/summary.csv
 
 ------------------------------------------------------------
 
-EXPERIMENT DESIGN (VERY IMPORTANT)
+MULTI-SEED STATISTICS (FOR PAPERS)
 
-Each experiment is defined by:
+Run multiple seeds:
 
-- group
-- variant
-- seed
+python experiments/sweep_seeds.py
+
+Then summarize:
+
+python experiments/summarize.py
+python experiments/summarize_seeds.py
+
+Final output:
+results/summary_mean_std.csv
+
+Meaning:
+
+summary.csv
+→ Each run (each seed) is one row
+
+summary_mean_std.csv
+→ Aggregated by:
+  (experiment_name, group, variant)
+  with mean and std
+
+------------------------------------------------------------
+
+EXPERIMENT CONFIG STRUCTURE
 
 Example config:
 
@@ -115,37 +132,34 @@ Example config:
   "seed": 42
 }
 
-------------------------------------------------------------
+Fields:
 
-GROUP MEANINGS
+experiment_name
+  Unique name for the experiment
 
-group = proposed
-    Your main method
+group
+  proposed / ablation / sota / baseline
 
-group = ablation
-    Modified version of proposed
-    (remove component / change parameter)
+variant
+  Short identifier of the condition
 
-group = sota
-    State-of-the-art comparison
-
-group = baseline
-    Simple or classical method
+seed
+  Random seed (fixed for reproducibility)
 
 ------------------------------------------------------------
 
 WHAT IS ABLATION?
 
-Ablation isolates components.
+Ablation isolates components of your method.
 
 Examples:
 - Remove attention
 - Replace GAT with MLP
 - Change penalty weight
-- Remove constraint term
+- Disable constraint term
 
-Goal:
-Explain why your method works.
+Purpose:
+Explain WHY your method works.
 
 ------------------------------------------------------------
 
@@ -156,17 +170,16 @@ SOTA comparison evaluates:
 Your method vs existing methods.
 
 Examples:
-- Heuristic baseline
-- Classical optimization
-- Published RL method
-- Public implementation
+- Classical heuristic
+- Published RL approach
+- Public baseline implementation
 
-Goal:
+Purpose:
 Show performance advantage.
 
 ------------------------------------------------------------
 
-REPRODUCIBILITY RULES
+REPRODUCIBILITY RULES (MANDATORY)
 
 Every experiment must:
 
@@ -174,10 +187,10 @@ Every experiment must:
 2) Fix random seed
 3) Save config_used.json
 4) Save metrics.json
-5) Never modify results manually
+5) Never manually edit results
 
-If someone cannot reproduce your experiment,
-it is considered incomplete.
+If someone cannot reproduce your result,
+the experiment is incomplete.
 
 ------------------------------------------------------------
 
@@ -206,9 +219,9 @@ Example metrics.json:
 
 ------------------------------------------------------------
 
-HOW TO ADD A NEW EXPERIMENT
+ADDING A NEW EXPERIMENT
 
-1) Create a new config in configs/
+1) Create new JSON in configs/
 
 Example:
 configs/ablation_penalty_low.json
@@ -217,36 +230,37 @@ configs/ablation_penalty_low.json
 
 python experiments/run.py configs/ablation_penalty_low.json
 
-3) Or run all:
+Or run all:
 
 python experiments/sweep.py
 
 ------------------------------------------------------------
 
-HOW TO ADD A NEW METRIC
+ADDING NEW METRICS
 
-In experiments/run.py:
+In experiments/run.py,
+modify run_experiment().
 
-Modify run_experiment()
+Return metrics as dictionary:
 
-Return metrics as dict:
-
-metrics = {
-    "accuracy": value,
-    "loss": value,
-    "reward": value
+{
+  "accuracy": value,
+  "reward": value,
+  "loss": value
 }
 
-summarize.py will automatically collect all metrics.
+They will automatically appear in summary.csv
+and summary_mean_std.csv.
 
 ------------------------------------------------------------
 
 COMMON MISTAKES
 
-- Running code without activating .venv
+- Not activating virtual environment
 - Editing results manually
 - Forgetting to fix seed
-- Mixing experiment logic inside src and experiments
+- Mixing execution logic inside src/
+- Saving outputs outside results/
 
 ------------------------------------------------------------
 
@@ -265,7 +279,7 @@ Workflow:
 
 4) Merge
 
-Branch examples:
+Examples:
 - feature/add-train
 - fix/readme-typo
 
@@ -274,31 +288,32 @@ At least confirm demo runs.
 
 ------------------------------------------------------------
 
-DESIGN PRINCIPLES
+DESIGN PHILOSOPHY
 
-This template is intentionally:
+This template is:
 
-- Not over-engineered
-- Not production-oriented
+- Not production engineering
 - Not CI-heavy
+- Not Docker-based
 
 It is built for:
 
 - Academic reproducibility
-- Clean experiment comparison
+- Clear experiment comparison
 - Student safety
-- Long-term maintainability
+- Sustainable research workflow
 
 ------------------------------------------------------------
 
-FINAL NOTE
+FINAL ADVICE
 
-If experiments become messy,
+If your experiments become messy,
 the problem is usually:
 
 - Missing config separation
 - Inconsistent metric naming
 - No seed control
+- Over-complicated structure
 
 Keep experiments simple.
 Keep metrics consistent.
